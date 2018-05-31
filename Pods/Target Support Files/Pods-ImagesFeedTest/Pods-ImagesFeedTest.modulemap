@@ -1,0 +1,6 @@
+framework module Pods_ImagesFeedTest {
+  umbrella header "Pods-ImagesFeedTest-umbrella.h"
+
+  export *
+  module * { export * }
+}
