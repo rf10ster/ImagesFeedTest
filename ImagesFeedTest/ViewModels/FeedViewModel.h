@@ -10,8 +10,8 @@
 #import "FeedItem.h"
 
 @protocol FeedViewModelDelegate <NSObject>
-- (void)viewModelDidChangeColumns:(NSInteger)columns;
-- (void)viewModelDidAddItems:(NSArray<id<FeedItem>> *)items isInitial:(BOOL)isInitial;
+- (void)viewModelDidChangeColumns:(NSInteger)columns completed:(void (^)(void))completed;
+- (void)viewModelDidAddItemsAt:(NSIndexSet *)indexes completed:(void (^)(void))completed;
 @end
 
 @interface FeedViewModel : NSObject
@@ -33,6 +33,7 @@
 
 - (NSArray<id<FeedItem>> *)items;
 - (void)addItems:(NSArray<id<FeedItem>> *)newItems;
+- (void)insertItem:(id<FeedItem>)item withinRange:(NSRange)range;
 - (void)addColumn;
 - (void)removeColumn;
 

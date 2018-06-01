@@ -9,7 +9,9 @@
 #import "FeedViewModel.h"
 
 @interface FeedViewModel ()
-@property(nonatomic, strong, readwrite) NSMutableArray<id<FeedItem>> *items;
+@property(nonatomic, strong, readwrite) NSArray<id<FeedItem>> *items;
+@property (nonatomic, strong) dispatch_queue_t serialQueue;
+@property(nonatomic, assign, readwrite) NSInteger currentColumnsCount;
 @end
 
 @implementation FeedViewModel
@@ -22,35 +24,91 @@
         
         // there will be only one section
         _sections = 1;
+        
+        _serialQueue = dispatch_queue_create("com.rf10ster.feedviewmodelqueue", DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
 
 - (void)addColumn {
-    _currentColumnsCount ++;
-    if (_currentColumnsCount > _maxColumnsCount) {
-        _currentColumnsCount = _maxColumnsCount;
-    } else {
-        [self.delegate viewModelDidChangeColumns:_currentColumnsCount];
-    }
+    __weak typeof(self)weakSelf = self;
+    dispatch_async(self.serialQueue, ^{
+        weakSelf.currentColumnsCount ++;
+        if (weakSelf.currentColumnsCount > weakSelf.maxColumnsCount) {
+            weakSelf.currentColumnsCount = weakSelf.maxColumnsCount;
+        } else {
+            
+            dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.delegate viewModelDidChangeColumns:weakSelf.currentColumnsCount completed:^{
+                    dispatch_semaphore_signal(sema);
+                }];
+            });
+            dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+            
+        }
+    });
 }
 
 - (void)removeColumn {
-    _currentColumnsCount --;
-    if (_minColumnsCount > _currentColumnsCount) {
-        _currentColumnsCount = _minColumnsCount;
-    } else {
-        [self.delegate viewModelDidChangeColumns:_currentColumnsCount];
-    }
+    __weak typeof(self)weakSelf = self;
+    dispatch_async(self.serialQueue, ^{
+        weakSelf.currentColumnsCount --;
+        if (weakSelf.minColumnsCount > weakSelf.currentColumnsCount) {
+            weakSelf.currentColumnsCount = weakSelf.minColumnsCount;
+        } else {
+            
+            dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.delegate viewModelDidChangeColumns:weakSelf.currentColumnsCount completed:^{
+                    dispatch_semaphore_signal(sema);
+                }];
+            });
+            dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+            
+        }
+    });
 }
 
 - (void)addItems:(NSArray<id<FeedItem>> *)newItems {
-    BOOL isInitial = self.items.count == 0;
-    if (isInitial) {
-        _items = [NSMutableArray arrayWithCapacity:newItems.count];
-    }
-    [_items addObjectsFromArray:newItems];
-    [self.delegate viewModelDidAddItems:newItems isInitial:isInitial];
+    __weak typeof(self)weakSelf = self;
+    dispatch_async(self.serialQueue, ^{
+        NSMutableArray *allItems = [[NSMutableArray alloc] initWithCapacity:(weakSelf.items.count + newItems.count)];
+        [allItems addObjectsFromArray:weakSelf.items];
+        [allItems addObjectsFromArray:newItems];
+        weakSelf.items = allItems;
+        NSIndexSet *addedIdxs = [[NSIndexSet alloc] initWithIndexesInRange:NSMakeRange(weakSelf.items.count-newItems.count,newItems.count)];
+        
+        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.delegate viewModelDidAddItemsAt:addedIdxs completed:^{
+                dispatch_semaphore_signal(sema);
+            }];
+        });
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+        
+    });
+}
+    
+- (void)insertItem:(id<FeedItem>)item withinRange:(NSRange)range {
+    __weak typeof(self)weakSelf = self;
+    dispatch_async(self.serialQueue, ^{
+        NSInteger min = range.location;
+        NSInteger max = min + range.length - 1;
+        NSInteger currentIndex = min + arc4random_uniform((uint32_t)(max - min + 1));
+        NSMutableArray *allItems = [weakSelf.items mutableCopy];
+        [allItems insertObject:item atIndex:currentIndex];
+        weakSelf.items = allItems;
+        
+        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.delegate viewModelDidAddItemsAt:[NSIndexSet indexSetWithIndex:currentIndex] completed:^{
+                dispatch_semaphore_signal(sema);
+            }];
+        });
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+        
+    });
 }
 
 - (id<FeedItem>)itemFor:(NSIndexPath *)indexPath {

@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol ImagesFeedCollectionViewLayoutDelegate <NSObject>
+- (CGSize)collectionView:(UICollectionView *)collectionView sizeForItemAt:(NSIndexPath *)IndexPath constraints:(CGSize)constraints;
+@end
+
 @interface ImagesFeedCollectionViewLayout : UICollectionViewLayout
-@property(nonatomic, assign) NSInteger columns;
+@property(nonatomic, assign) NSInteger numberOfColumns;
+@property(nonatomic, assign) CGFloat cellPadding;
+@property(nonatomic, weak) id<ImagesFeedCollectionViewLayoutDelegate> delegate;
 @end

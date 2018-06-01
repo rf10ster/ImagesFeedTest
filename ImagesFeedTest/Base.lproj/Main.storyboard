@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -19,9 +19,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="g2i-f0-mez" customClass="ImagesFeedCollectionView">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" contentInsetAdjustmentBehavior="never" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="g2i-f0-mez" customClass="ImagesFeedCollectionView">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewLayout key="collectionViewLayout" id="lyV-lb-rP2" customClass="ImagesFeedCollectionViewLayout"/>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="AdsCollectionViewCell" id="gsp-UZ-LRw" customClass="AdsCollectionViewCell">
@@ -87,22 +86,36 @@
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
-                                    <barButtonItem systemItem="rewind" id="BaL-dR-6Xx"/>
+                                    <barButtonItem systemItem="rewind" id="BaL-dR-6Xx">
+                                        <connections>
+                                            <action selector="removeColumns:" destination="BYZ-38-t0r" id="obJ-LI-DrI"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem systemItem="flexibleSpace" id="PMk-gV-ref"/>
-                                    <barButtonItem style="done" systemItem="fastForward" id="n8b-po-VTV"/>
+                                    <barButtonItem style="done" systemItem="fastForward" id="n8b-po-VTV">
+                                        <connections>
+                                            <action selector="addColumns:" destination="BYZ-38-t0r" id="kvp-Q4-Ojm"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="eVp-gx-jgo">
+                                <rect key="frame" x="169" y="325.5" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="g2i-f0-mez" secondAttribute="trailing" id="2rU-ai-eRc"/>
+                            <constraint firstItem="eVp-gx-jgo" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Ib4-OO-09j"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="g2i-f0-mez" secondAttribute="bottom" id="KH2-UI-sXA"/>
                             <constraint firstItem="g2i-f0-mez" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="UJr-Yf-ecx"/>
+                            <constraint firstItem="eVp-gx-jgo" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="r7k-7v-axH"/>
                             <constraint firstItem="g2i-f0-mez" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="udi-EO-jo9"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="activityView" destination="eVp-gx-jgo" id="O2M-Yf-wHk"/>
                         <outlet property="addColumnsButton" destination="n8b-po-VTV" id="86o-md-GDd"/>
                         <outlet property="collectionView" destination="g2i-f0-mez" id="yZQ-zx-ykk"/>
                         <outlet property="removeColumnsButton" destination="BaL-dR-6Xx" id="Q93-3j-Rdn"/>

@@ -48,7 +48,13 @@ NSString * const access_token = @"access_token";
 - (void)fetchWithOffset:(NSInteger)offset onSuccess:(void (^)(FetchResult *result))successBlock onFailure:(void (^)(NSError * error))failureBlock {
 
     [self performRequest:[self popularRequest:offset] retryOnNotAuthorized:YES success:^(NSDictionary *jsonItems) {
-        
+        NSError *jsonerror;
+        FetchResult *fetchResult = [[FetchResult alloc] initWithDictionary:jsonItems error:&jsonerror];
+        if (jsonerror) {
+            failureBlock(jsonerror);
+        } else {
+            successBlock(fetchResult);
+        }
     } failure:^(NSURLSessionDataTask *dataTask, NSError *error) {
         failureBlock(error);
     }];
@@ -73,9 +79,9 @@ NSString * const access_token = @"access_token";
 
 - (NSURLRequest *)requestWithMethod:(NSString *)method URLString:(NSString *)URLString parameters:(id)parameters  {
     
-    NSString *accessToken = [[NSUserDefaults standardUserDefaults] stringForKey:access_token];
+    NSString *accessToken = [[NSUserDefaults standardUserDefaults] objectForKey:access_token];
     if (accessToken) {
-        [self.httpClient.requestSerializer setValue:accessToken forHTTPHeaderField:@"Authorization"];
+        [self.httpClient.requestSerializer setValue:[NSString stringWithFormat:@"Bearer %@",accessToken] forHTTPHeaderField:@"Authorization"];
     }
     
     return [self.httpClient.requestSerializer requestWithMethod:method URLString:[[NSURL URLWithString:URLString relativeToURL:self.httpClient.baseURL] absoluteString] parameters:parameters error:nil];
@@ -97,7 +103,6 @@ NSString * const access_token = @"access_token";
                                           });
                                       } else {
                                           if ([weakSelf isNotAuthorized:response responseObject:responseObject error:error] && retryOnNotAuthorized) {
-                                              // not authorized
                                               [weakSelf reloginWith:dataTask success:success failure:failure];
                                           } else if (failure) {
                                               dispatch_async(dispatch_get_main_queue(), ^{
@@ -118,7 +123,7 @@ NSString * const access_token = @"access_token";
         [[NSUserDefaults standardUserDefaults] setObject:accessToken forKey:access_token];
         // recreate request
         NSMutableURLRequest *mutableRequest = [originalDataTask.originalRequest mutableCopy];
-        [mutableRequest addValue:accessToken forHTTPHeaderField:@"Authorization"];
+        [mutableRequest setValue:[NSString stringWithFormat:@"Bearer %@",accessToken] forHTTPHeaderField:@"Authorization"];
         [[weakSelf performRequest:[mutableRequest copy] retryOnNotAuthorized:NO success:success failure:failure] resume];
         if (originalDataTask.state != NSURLSessionTaskStateCanceling) {
             [originalDataTask cancel];

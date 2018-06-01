@@ -17,7 +17,8 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *removeColumnsButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addColumnsButton;
 @property (nonatomic, weak) IBOutlet ImagesFeedCollectionView *collectionView;
-
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityView;
+    
 @property (nonatomic, assign) CGSize itemSizeConstraints;
 
 @end
@@ -29,15 +30,19 @@ NSInteger const AdsAddingMaxDelay = 20;
 - (void)viewDidLoad {
     [super viewDidLoad];
     if (!self.viewModel) {
-        self.viewModel = [[FeedViewModel alloc] initWithMaxColumns:6 minColumns:1 columns:2];
+        self.viewModel = [[FeedViewModel alloc] initWithMaxColumns:5 minColumns:1 columns:2];
     }
-    
-    // FIXME:
-//    self.collectionView.footerVisible = self.viewModel.hasMore;
-    
+    self.viewModel.delegate = self;
+
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
-    ((ImagesFeedCollectionViewLayout *)self.collectionView.collectionViewLayout).columns = self.viewModel.currentColumnsCount;
+    ((UIScrollView *)self.collectionView).delegate = self;
+
+    self.collectionView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
+    ImagesFeedCollectionViewLayout *clayout = (ImagesFeedCollectionViewLayout *)self.collectionView.collectionViewLayout;
+    clayout.delegate = self;
+    clayout.numberOfColumns = self.viewModel.currentColumnsCount;
+    clayout.cellPadding = 6;
     
     [self addAdsWithDelay:AdsAddingMaxDelay repeat:YES];
     [self fetchItems];
@@ -49,23 +54,35 @@ NSInteger const AdsAddingMaxDelay = 20;
     
     self.itemSizeConstraints = self.collectionView.bounds.size;
 }
-
+- (IBAction)removeColumns:(id)sender {
+    [self.viewModel removeColumn];
+}
+- (IBAction)addColumns:(id)sender {
+    [self.viewModel addColumn];
+}
+    
 // MARK: - helper methods
 
 - (void)fetchItems {
+    [self.activityView startAnimating];
     __weak typeof(self)weakSelf = self;
     [[FeedApi provider] fetchWithOffset:self.viewModel.nextOffset onSuccess:^(FetchResult *result) {
         weakSelf.viewModel.nextOffset = result.nextOffset;
         weakSelf.viewModel.hasMore = result.hasMore;
-        [weakSelf.viewModel addItems:result.feedItems];
+        [weakSelf.viewModel addItems:result.models];
+        [weakSelf.activityView stopAnimating];
     } onFailure:^(NSError *error) {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [weakSelf presentViewController:alertController animated:YES completion:nil];
+        [weakSelf.activityView stopAnimating];
     }];
 }
+    
+
 
 - (void)addAdsWithDelay:(NSInteger)maxDelay repeat:(BOOL)repeat {
-    NSInteger minDelay = 1;
+    NSInteger minDelay = maxDelay/2;
     NSInteger currentDelay = minDelay + arc4random_uniform((uint32_t)(maxDelay - minDelay + 1));
     __weak typeof(self)weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(currentDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -75,7 +92,7 @@ NSInteger const AdsAddingMaxDelay = 20;
         }
         FeedAdsModel *ads = [[FeedAdsModel alloc] initWithText:[NSString stringWithFormat:@"Ads after %ld", (long)currentDelay]];
 
-        [strongSelf.viewModel addItems:@[ads]];
+        [strongSelf.viewModel insertItem:ads withinRange:NSMakeRange(0, strongSelf.viewModel.items.count)];
         
         [strongSelf addAdsWithDelay:AdsAddingMaxDelay repeat:YES];
     });
@@ -99,6 +116,25 @@ NSInteger const AdsAddingMaxDelay = 20;
     [cell updateWith:item];
     return cell;
 }
+    
+// MARK: - ImagesFeedCollectionViewLayoutDelegate
+    
+- (CGSize)collectionView:(UICollectionView *)collectionView sizeForItemAt:(NSIndexPath *)IndexPath constraints:(CGSize)constraints {
+    id<FeedItem> item = [self.viewModel itemFor:IndexPath];
+    switch (item.itemType) {
+        case FeedItemTypeAds:
+        return CGSizeMake(constraints.width, constraints.width);
+        case FeedItemTypeFeed:
+        {
+            FeedItemModel *model = (FeedItemModel *)item;
+            CGFloat oldWidth = model.imageSize.width;
+            CGFloat scaleFactor = constraints.width / oldWidth;
+            CGFloat newHeight = model.imageSize.height * scaleFactor;
+            CGFloat newWidth = oldWidth * scaleFactor;
+            return CGSizeMake(newWidth, newHeight);
+        }
+    }
+}
 
 // MARK: - UICollectionViewDataSource
 
@@ -110,21 +146,9 @@ NSInteger const AdsAddingMaxDelay = 20;
     return self.viewModel.items.count;
 }
 
-- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    if ([cell respondsToSelector:@selector(stopLoading)])
-    {
-        [cell performSelector:@selector(stopLoading)];
-    }
-}
-
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
-    if (self.viewModel.hasMore && [kind isEqualToString:UICollectionElementKindSectionFooter]) {
-    }
-    return nil;
-}
-
-// MARK: - UIScrollViewDelegate
-
+// MARK: - UIScrollViewDelegate - not called ???
+// alternative apploach for fetch next is:
+// sectionFooterVisible = self.viewModel.hasMore;
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
     if (!self.viewModel.hasMore) {
@@ -144,18 +168,48 @@ NSInteger const AdsAddingMaxDelay = 20;
     }
     
 }
+    
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.item > (self.viewModel.items.count - 1 - self.viewModel.currentColumnsCount)) {
+        // before last row appeared
+        // fetch next
+        [self fetchItems];
+    }
+}
 
 // MARK: - FeedViewModelDelegate
 
-- (void)viewModelDidChangeColumns:(NSInteger)columns {
-    ((ImagesFeedCollectionViewLayout *)self.collectionView.collectionViewLayout).columns = columns;
+- (void)viewModelDidChangeColumns:(NSInteger)columns completed:(void (^)(void))completed {
+    //[self.collectionView scrollRectToVisible:CGRectZero animated:NO];
     [self.collectionView.collectionViewLayout invalidateLayout];
+    ((ImagesFeedCollectionViewLayout *)self.collectionView.collectionViewLayout).numberOfColumns = columns;
+    [self.collectionView reloadData];
+    completed();
 }
 
-- (void)viewModelDidAddItems:(NSArray<id<FeedItem>> *)items isInitial:(BOOL)isInitial {
+- (void)viewModelDidAddItemsAt:(NSIndexSet *)indexes completed:(void (^)(void))completed {
+    BOOL isInitial = self.viewModel.items.count == indexes.count;
     if (isInitial) {
         [self.collectionView reloadData];
+        completed();
         return;
+    }
+    @try {
+        NSMutableArray<NSIndexPath *> *indexPaths = [[NSMutableArray alloc] initWithCapacity:indexes.count];
+        NSInteger section = self.viewModel.sections - 1;
+        [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+           [indexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:section]];
+        }];
+        [self.collectionView performBatchUpdates:^{
+            [self.collectionView insertItemsAtIndexPaths:indexPaths];
+        } completion:^(BOOL finished) {
+            completed();
+        }];
+    } @catch (NSException *exception) {
+        NSLog(@"%@", exception.reason);
+        [self.collectionView.collectionViewLayout invalidateLayout];
+        [self.collectionView reloadData];
+        completed();
     }
 }
 

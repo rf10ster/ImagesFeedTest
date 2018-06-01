@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "FeedViewModel.h"
+#import "ImagesFeedCollectionViewLayout.h"
 
-@interface ViewController : UIViewController<UICollectionViewDelegate, UICollectionViewDataSource>
+@interface ViewController : UIViewController<UICollectionViewDelegate, UICollectionViewDataSource, ImagesFeedCollectionViewLayoutDelegate, FeedViewModelDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, strong) FeedViewModel *viewModel;
 

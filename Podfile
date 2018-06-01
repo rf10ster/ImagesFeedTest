@@ -8,6 +8,7 @@ inhibit_all_warnings!
 def default_pods
     pod 'AFNetworking', '~> 3.2'
     pod 'SDWebImage', '~> 4.3'
+    pod 'JSONModel', '~> 1.7'
 end
 
 target 'ImagesFeedTest' do
