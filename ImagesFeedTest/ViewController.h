@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FeedViewModel.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<UICollectionViewDelegate, UICollectionViewDataSource>
 
+@property (nonatomic, strong) FeedViewModel *viewModel;
 
 @end
 

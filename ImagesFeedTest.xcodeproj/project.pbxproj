@@ -17,10 +17,15 @@
 		9057981120BF530200A8B6B8 /* ImagesFeedTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057981020BF530200A8B6B8 /* ImagesFeedTestTests.m */; };
 		9057981E20BF54B200A8B6B8 /* FeedApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057981D20BF54B200A8B6B8 /* FeedApi.m */; };
 		9057982220BF553500A8B6B8 /* ImagesFeedCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057982120BF553500A8B6B8 /* ImagesFeedCollectionView.m */; };
-		9057982620BF55AC00A8B6B8 /* ImagesFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057982520BF55AC00A8B6B8 /* ImagesFeedViewController.m */; };
 		9057983120BF637D00A8B6B8 /* FeedItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057983020BF637D00A8B6B8 /* FeedItemModel.m */; };
 		9057983420BF638F00A8B6B8 /* FeedAdsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057983320BF638F00A8B6B8 /* FeedAdsModel.m */; };
 		9057983720BF6A4000A8B6B8 /* DeviantArtProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057983620BF6A4000A8B6B8 /* DeviantArtProvider.m */; };
+		9057983A20C1005A00A8B6B8 /* ImagesFeedCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057983920C1005A00A8B6B8 /* ImagesFeedCollectionViewLayout.m */; };
+		9057983D20C1030600A8B6B8 /* FeedItemCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057983C20C1030600A8B6B8 /* FeedItemCollectionViewCell.m */; };
+		9057984020C1031E00A8B6B8 /* AdsCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057983F20C1031E00A8B6B8 /* AdsCollectionViewCell.m */; };
+		9057984320C1074400A8B6B8 /* FeedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057984220C1074400A8B6B8 /* FeedViewModel.m */; };
+		9057984820C11F7500A8B6B8 /* FetchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057984720C11F7500A8B6B8 /* FetchResult.m */; };
+		9057984B20C12A8500A8B6B8 /* BaseCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9057984A20C12A8500A8B6B8 /* BaseCollectionViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,8 +58,6 @@
 		9057981D20BF54B200A8B6B8 /* FeedApi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedApi.m; sourceTree = "<group>"; };
 		9057982020BF553500A8B6B8 /* ImagesFeedCollectionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagesFeedCollectionView.h; sourceTree = "<group>"; };
 		9057982120BF553500A8B6B8 /* ImagesFeedCollectionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagesFeedCollectionView.m; sourceTree = "<group>"; };
-		9057982420BF55AC00A8B6B8 /* ImagesFeedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagesFeedViewController.h; sourceTree = "<group>"; };
-		9057982520BF55AC00A8B6B8 /* ImagesFeedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagesFeedViewController.m; sourceTree = "<group>"; };
 		9057982D20BF630300A8B6B8 /* FeedProviderProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedProviderProtocol.h; sourceTree = "<group>"; };
 		9057982F20BF637D00A8B6B8 /* FeedItemModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedItemModel.h; sourceTree = "<group>"; };
 		9057983020BF637D00A8B6B8 /* FeedItemModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedItemModel.m; sourceTree = "<group>"; };
@@ -62,6 +65,19 @@
 		9057983320BF638F00A8B6B8 /* FeedAdsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedAdsModel.m; sourceTree = "<group>"; };
 		9057983520BF6A4000A8B6B8 /* DeviantArtProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviantArtProvider.h; sourceTree = "<group>"; };
 		9057983620BF6A4000A8B6B8 /* DeviantArtProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviantArtProvider.m; sourceTree = "<group>"; };
+		9057983820C1005A00A8B6B8 /* ImagesFeedCollectionViewLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagesFeedCollectionViewLayout.h; sourceTree = "<group>"; };
+		9057983920C1005A00A8B6B8 /* ImagesFeedCollectionViewLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagesFeedCollectionViewLayout.m; sourceTree = "<group>"; };
+		9057983B20C1030600A8B6B8 /* FeedItemCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedItemCollectionViewCell.h; sourceTree = "<group>"; };
+		9057983C20C1030600A8B6B8 /* FeedItemCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedItemCollectionViewCell.m; sourceTree = "<group>"; };
+		9057983E20C1031E00A8B6B8 /* AdsCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdsCollectionViewCell.h; sourceTree = "<group>"; };
+		9057983F20C1031E00A8B6B8 /* AdsCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdsCollectionViewCell.m; sourceTree = "<group>"; };
+		9057984120C1074400A8B6B8 /* FeedViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedViewModel.h; sourceTree = "<group>"; };
+		9057984220C1074400A8B6B8 /* FeedViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedViewModel.m; sourceTree = "<group>"; };
+		9057984420C1077800A8B6B8 /* FeedItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedItem.h; sourceTree = "<group>"; };
+		9057984620C11F7500A8B6B8 /* FetchResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchResult.h; sourceTree = "<group>"; };
+		9057984720C11F7500A8B6B8 /* FetchResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FetchResult.m; sourceTree = "<group>"; };
+		9057984920C1258600A8B6B8 /* BaseCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseCollectionViewCell.h; sourceTree = "<group>"; };
+		9057984A20C12A8500A8B6B8 /* BaseCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseCollectionViewCell.m; sourceTree = "<group>"; };
 		D25F084277F764BC498FEC09 /* Pods_ImagesFeedTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ImagesFeedTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -124,8 +140,8 @@
 		905797F620BF530000A8B6B8 /* ImagesFeedTest */ = {
 			isa = PBXGroup;
 			children = (
+				9057984520C10EDF00A8B6B8 /* ViewModels */,
 				9057982E20BF635400A8B6B8 /* Models */,
-				9057982320BF557500A8B6B8 /* ViewControllers */,
 				9057981F20BF54FA00A8B6B8 /* Views */,
 				9057981B20BF547900A8B6B8 /* Services */,
 				905797F720BF530000A8B6B8 /* AppDelegate.h */,
@@ -167,17 +183,16 @@
 			children = (
 				9057982020BF553500A8B6B8 /* ImagesFeedCollectionView.h */,
 				9057982120BF553500A8B6B8 /* ImagesFeedCollectionView.m */,
+				9057983820C1005A00A8B6B8 /* ImagesFeedCollectionViewLayout.h */,
+				9057983920C1005A00A8B6B8 /* ImagesFeedCollectionViewLayout.m */,
+				9057983B20C1030600A8B6B8 /* FeedItemCollectionViewCell.h */,
+				9057983C20C1030600A8B6B8 /* FeedItemCollectionViewCell.m */,
+				9057983E20C1031E00A8B6B8 /* AdsCollectionViewCell.h */,
+				9057983F20C1031E00A8B6B8 /* AdsCollectionViewCell.m */,
+				9057984920C1258600A8B6B8 /* BaseCollectionViewCell.h */,
+				9057984A20C12A8500A8B6B8 /* BaseCollectionViewCell.m */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		9057982320BF557500A8B6B8 /* ViewControllers */ = {
-			isa = PBXGroup;
-			children = (
-				9057982420BF55AC00A8B6B8 /* ImagesFeedViewController.h */,
-				9057982520BF55AC00A8B6B8 /* ImagesFeedViewController.m */,
-			);
-			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		9057982E20BF635400A8B6B8 /* Models */ = {
@@ -187,8 +202,20 @@
 				9057983020BF637D00A8B6B8 /* FeedItemModel.m */,
 				9057983220BF638F00A8B6B8 /* FeedAdsModel.h */,
 				9057983320BF638F00A8B6B8 /* FeedAdsModel.m */,
+				9057984420C1077800A8B6B8 /* FeedItem.h */,
+				9057984620C11F7500A8B6B8 /* FetchResult.h */,
+				9057984720C11F7500A8B6B8 /* FetchResult.m */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		9057984520C10EDF00A8B6B8 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9057984120C1074400A8B6B8 /* FeedViewModel.h */,
+				9057984220C1074400A8B6B8 /* FeedViewModel.m */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -315,10 +342,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ImagesFeedTest/Pods-ImagesFeedTest-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -334,13 +363,18 @@
 			files = (
 				9057983720BF6A4000A8B6B8 /* DeviantArtProvider.m in Sources */,
 				9057983120BF637D00A8B6B8 /* FeedItemModel.m in Sources */,
+				9057984020C1031E00A8B6B8 /* AdsCollectionViewCell.m in Sources */,
+				9057984320C1074400A8B6B8 /* FeedViewModel.m in Sources */,
 				905797FC20BF530000A8B6B8 /* ViewController.m in Sources */,
+				9057984820C11F7500A8B6B8 /* FetchResult.m in Sources */,
 				9057980720BF530200A8B6B8 /* main.m in Sources */,
-				9057982620BF55AC00A8B6B8 /* ImagesFeedViewController.m in Sources */,
 				9057981E20BF54B200A8B6B8 /* FeedApi.m in Sources */,
 				905797F920BF530000A8B6B8 /* AppDelegate.m in Sources */,
+				9057984B20C12A8500A8B6B8 /* BaseCollectionViewCell.m in Sources */,
 				9057983420BF638F00A8B6B8 /* FeedAdsModel.m in Sources */,
 				9057982220BF553500A8B6B8 /* ImagesFeedCollectionView.m in Sources */,
+				9057983A20C1005A00A8B6B8 /* ImagesFeedCollectionViewLayout.m in Sources */,
+				9057983D20C1030600A8B6B8 /* FeedItemCollectionViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

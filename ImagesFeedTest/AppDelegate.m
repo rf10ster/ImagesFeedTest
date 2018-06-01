@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "ImagesFeedViewController.h"
 #import "FeedApi.h"
 #import "DeviantArtProvider.h"
 

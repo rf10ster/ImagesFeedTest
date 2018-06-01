@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ImagesFeedCollectionViewLayout.h"
 
 @interface ImagesFeedCollectionView : UICollectionView
 

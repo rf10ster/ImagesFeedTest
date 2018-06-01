@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FeedItem.h"
 @import CoreGraphics;
 
-@interface FeedItemModel : NSObject
+@interface FeedItemModel : NSObject<FeedItem>
 
 - (instancetype)initWithUrl:(NSURL *)imageUrl size:(CGSize)imageSize;
 

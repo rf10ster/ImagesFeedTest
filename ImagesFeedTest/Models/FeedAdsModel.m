@@ -18,4 +18,8 @@
     return self;
 }
 
+- (FeedItemType)itemType {
+    return FeedItemTypeAds;
+}
+
 @end

@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FeedItemModel.h"
+#import "FetchResult.h"
 
 @protocol FeedProviderProtocol <NSObject>
 
-- (void)fetchWithOffset:(NSInteger)offset onSuccess:(void (^)(NSArray<__kindof FeedItemModel *> *results))successBlock onFailure:(void (^)(NSError * error))failureBlock;
+- (void)fetchWithOffset:(NSInteger)offset onSuccess:(void (^)(FetchResult *result))successBlock onFailure:(void (^)(NSError * error))failureBlock;
 
 @end

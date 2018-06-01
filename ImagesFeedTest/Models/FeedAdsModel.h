@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FeedItem.h"
 
-@interface FeedAdsModel : NSObject
+@interface FeedAdsModel : NSObject<FeedItem>
 
 - (instancetype)initWithText:(NSString *)adsText;
 

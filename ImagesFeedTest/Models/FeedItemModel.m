@@ -20,4 +20,8 @@
     return self;
 }
 
+- (FeedItemType)itemType {
+    return FeedItemTypeFeed;
+}
+
 @end

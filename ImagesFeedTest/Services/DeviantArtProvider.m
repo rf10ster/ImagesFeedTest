@@ -19,6 +19,7 @@ NSInteger const DeviantArtFetchLimit = 20; //min: 1 max: 120 default: 10
 NSString * const client_id = @"8143";
 NSString * const client_secret = @"772981ffe669885ff2f9d08af17ce1b3";
 NSString * const grant_type = @"client_credentials";
+NSString * const access_token = @"access_token";
 
 // imagesfeedtest://oauth2/deviantart
 
@@ -44,9 +45,9 @@ NSString * const grant_type = @"client_credentials";
 
 
 
-- (void)fetchWithOffset:(NSInteger)offset onSuccess:(void (^)(NSArray<__kindof FeedItemModel *> *results))successBlock onFailure:(void (^)(NSError * error))failureBlock {
+- (void)fetchWithOffset:(NSInteger)offset onSuccess:(void (^)(FetchResult *result))successBlock onFailure:(void (^)(NSError * error))failureBlock {
 
-    [self performRequest:[self popularRequest:offset] success:^(NSDictionary *jsonItems) {
+    [self performRequest:[self popularRequest:offset] retryOnNotAuthorized:YES success:^(NSDictionary *jsonItems) {
         
     } failure:^(NSURLSessionDataTask *dataTask, NSError *error) {
         failureBlock(error);
@@ -70,13 +71,19 @@ NSString * const grant_type = @"client_credentials";
     return [self requestWithMethod:@"GET" URLString:DeviantArtTokenPath parameters:params];
 }
 
-- (NSURLRequest *)requestWithMethod:(NSString *)method URLString:(NSString *)URLString parameters:(id)parameters {
+- (NSURLRequest *)requestWithMethod:(NSString *)method URLString:(NSString *)URLString parameters:(id)parameters  {
+    
+    NSString *accessToken = [[NSUserDefaults standardUserDefaults] stringForKey:access_token];
+    if (accessToken) {
+        [self.httpClient.requestSerializer setValue:accessToken forHTTPHeaderField:@"Authorization"];
+    }
+    
     return [self.httpClient.requestSerializer requestWithMethod:method URLString:[[NSURL URLWithString:URLString relativeToURL:self.httpClient.baseURL] absoluteString] parameters:parameters error:nil];
 }
 
-- (NSURLSessionDataTask *)performRequest:(NSURLRequest *)request success:(void (^)(id))success failure:(void (^)(NSURLSessionDataTask *dataTask, NSError *error))failure {
+- (NSURLSessionDataTask *)performRequest:(NSURLRequest *)request retryOnNotAuthorized:(BOOL)retryOnNotAuthorized success:(void (^)(id))success failure:(void (^)(NSURLSessionDataTask *dataTask, NSError *error))failure {
     NSParameterAssert(success);
-    
+    __weak typeof(self)weakSelf = self;
     __block NSURLSessionDataTask *dataTask = nil;
     dataTask = [self.httpClient dataTaskWithRequest:request
                                      uploadProgress:nil
@@ -89,8 +96,9 @@ NSString * const grant_type = @"client_credentials";
                                               success(jsonDictionary);
                                           });
                                       } else {
-                                          if ([response statusCode] == -401) {
+                                          if ([weakSelf isNotAuthorized:response responseObject:responseObject error:error] && retryOnNotAuthorized) {
                                               // not authorized
+                                              [weakSelf reloginWith:dataTask success:success failure:failure];
                                           } else if (failure) {
                                               dispatch_async(dispatch_get_main_queue(), ^{
                                                   failure(dataTask, error);
@@ -103,4 +111,32 @@ NSString * const grant_type = @"client_credentials";
     return dataTask;
 }
 
+- (void)reloginWith:(NSURLSessionDataTask *)originalDataTask success:(void (^)(id))success failure:(void (^)(NSURLSessionDataTask *dataTask, NSError *error))failure {
+    __weak typeof(self)weakSelf = self;
+    [self performRequest:[self tokenRequest] retryOnNotAuthorized:NO success:^(NSDictionary *jsonItems) {
+        NSString *accessToken = jsonItems[access_token];
+        [[NSUserDefaults standardUserDefaults] setObject:accessToken forKey:access_token];
+        // recreate request
+        NSMutableURLRequest *mutableRequest = [originalDataTask.originalRequest mutableCopy];
+        [mutableRequest addValue:accessToken forHTTPHeaderField:@"Authorization"];
+        [[weakSelf performRequest:[mutableRequest copy] retryOnNotAuthorized:NO success:success failure:failure] resume];
+        if (originalDataTask.state != NSURLSessionTaskStateCanceling) {
+            [originalDataTask cancel];
+        }
+    } failure:^(NSURLSessionDataTask *dataTask, NSError *error) {
+        failure(originalDataTask, error);
+        if (originalDataTask.state != NSURLSessionTaskStateCanceling) {
+            [originalDataTask cancel];
+        }
+    }];
+}
+
+- (BOOL)isNotAuthorized:(NSURLResponse *)response responseObject:(id)responseObject error:(NSError *)error {
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+    if (httpResponse.statusCode == 401) {
+        NSLog(@"response is not authorized %@", response);
+        return YES;
+    }
+    return NO;
+}
 @end
